@@ -1,10 +1,16 @@
-import 'package:app_ruta/provider/home_provider.dart';
-import 'package:app_ruta/theme/colores.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_ticket/flutter_ticket.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:maps_app/blocs/blocs.dart';
+import 'package:maps_app/models/list_model.dart';
+import 'package:maps_app/screens/map_screen.dart';
 import 'package:maps_app/themes/colores.dart';
-import 'package:provider/provider.dart';
+
+import '../blocs/location/location_bloc.dart';
+import '../services/traffic_service.dart';
+import 'add_list_view.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -20,8 +26,8 @@ class HomeView extends StatelessWidget {
             const SizedBox(height: 10),
             _Header(),
             const SizedBox(height: 10),
-            const SearchRoute(),
-            const Expanded(
+            // const SearchRoute(),
+            Expanded(
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 10),
                 // padding: EdgeInsets.all(8.0),
@@ -116,6 +122,130 @@ class _Header extends StatelessWidget {
   }
 }
 
+class _ListRouter extends StatelessWidget {
+  _ListRouter();
+
+  late LocationBloc locationBloc;
+
+  @override
+  Widget build(BuildContext context) {
+    locationBloc = BlocProvider.of<LocationBloc>(context);
+    DateFormat format = DateFormat('HH:mm', 'es_ES');
+    TextStyle titleStyle =
+        const TextStyle(fontWeight: FontWeight.w600, fontSize: 18.0);
+    return FutureBuilder<List<ListModel>>(
+        future: TrafficService().getRoutesList(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return const Center(
+              child: CircularProgressIndicator.adaptive(),
+            );
+          }
+          final list = snapshot.data ?? [];
+          return ListView.builder(
+            itemCount: list.length,
+            itemBuilder: (BuildContext contex, int index) {
+              return Column(
+                children: [
+                  GestureDetector(
+                    onTap: () async {
+                      locationBloc.startFollowingUser(
+                        LatLng(list[index].startLatitude,
+                            list[index].startLongitude),
+                      );
+                      final destination =
+                          await BlocProvider.of<SearchBloc>(context)
+                              .getCoorsStartToEnd(
+                                  LatLng(list[index].startLatitude,
+                                      list[index].startLongitude),
+                                  LatLng(list[index].destinationLatitude,
+                                      list[index].destinationLongitude));
+                      BlocProvider.of<MapBloc>(context)
+                          .drawRoutePolyline(destination);
+
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (_) => MapScreen()));
+                    },
+                    child: Ticket(
+                      innerRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(10.0),
+                        topRight: Radius.circular(10.0),
+                        bottomLeft: Radius.circular(10.0),
+                        bottomRight: Radius.circular(10.0),
+                      ),
+                      outerRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(10.0),
+                        topRight: Radius.circular(10.0),
+                        bottomLeft: Radius.circular(10.0),
+                        bottomRight: Radius.circular(10.0),
+                      ),
+                      boxShadow: const [
+                        BoxShadow(
+                          offset: Offset(0, 4.0),
+                          blurRadius: 2.0,
+                          spreadRadius: 2.0,
+                          color: Color.fromRGBO(196, 196, 196, .76),
+                        )
+                      ],
+                      child: Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colores.white,
+                        ),
+                        // title: Text(routerMapList[index].title),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Row(
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    format.format(DateTime.now()),
+                                    style: titleStyle,
+                                  ),
+                                  const Text("Om 35 min"),
+                                ],
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Text(list[index].title),
+                              ),
+                              const Spacer(),
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: Colores.yellow,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: IconButton(
+                                  onPressed: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) => AddListView(),
+                                      ),
+                                    );
+                                  },
+                                  icon: Icon(
+                                    Icons.arrow_forward,
+                                    color: Colores.black,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                ],
+              );
+            },
+          );
+        });
+  }
+}
+
 class SearchRoute extends StatefulWidget {
   const SearchRoute({super.key});
 
@@ -142,7 +272,7 @@ class _SearchRouteState extends State<SearchRoute> {
         ],
       ),
       child: Padding(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         child: Form(
           child: Column(
             children: [
@@ -244,138 +374,33 @@ class _SearchRouteState extends State<SearchRoute> {
                 },
               ),
               const SizedBox(height: 20),
-              Row(
-                children: [
-                  Container(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colores.yellow,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          children: [
-                            Text("14:00",
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w300,
-                                  color: Colores.black,
-                                )),
-                            Icon(
-                              Icons.access_time,
-                              color: Colores.black.withOpacity(0.6),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colores.yellow,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      Text("14:00",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w300,
+                            color: Colores.black,
+                          )),
+                      Icon(
+                        Icons.access_time,
+                        color: Colores.black.withOpacity(0.6),
+                      )
+                    ],
                   ),
-                ],
+                ),
               ),
             ],
           ),
         ),
       ),
     );
-  }
-}
-
-class _ListRouter extends StatelessWidget {
-  const _ListRouter({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    // List<ListRouterMap> routerMapList = generateRouterMapList();
-    DateFormat format = DateFormat('HH:mm', 'es');
-    TextStyle titleStyle = const TextStyle(fontWeight: FontWeight.w600, fontSize: 18.0);
-    return Consumer<HomeProvider>(builder: (BuildContext context, data, Widget? child) {
-      return ListView.builder(
-        itemCount: data.routerMapList.length,
-        itemBuilder: (BuildContext contex, int index) {
-          return Column(
-            children: [
-              Ticket(
-                innerRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(10.0),
-                  topRight: Radius.circular(10.0),
-                  bottomLeft: Radius.circular(10.0),
-                  bottomRight: Radius.circular(10.0),
-                ),
-                outerRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(10.0),
-                  topRight: Radius.circular(10.0),
-                  bottomLeft: Radius.circular(10.0),
-                  bottomRight: Radius.circular(10.0),
-                ),
-                boxShadow: const [
-                  BoxShadow(
-                    offset: Offset(0, 4.0),
-                    blurRadius: 2.0,
-                    spreadRadius: 2.0,
-                    color: Color.fromRGBO(196, 196, 196, .76),
-                  )
-                ],
-                child: Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: Colores.white,
-                  ),
-                  // title: Text(routerMapList[index].title),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: SizedBox(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    format.format(data.routerMapList[index].time),
-                                    style: titleStyle,
-                                  ),
-                                  Text("Om 35 min"),
-                                ],
-                              ),
-                              const SizedBox(width: 30),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(data.routerMapList[index].title),
-                                  Text(data.routerMapList[index].subTitle, style: titleStyle),
-                                ],
-                              ),
-                            ],
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Colores.yellow,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: IconButton(
-                              onPressed: () {
-                                // Navigator.pushNamed(context, "detail");
-                              },
-                              icon: Icon(
-                                Icons.arrow_forward,
-                                color: Colores.black,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 10),
-            ],
-          );
-        },
-      );
-    });
   }
 }

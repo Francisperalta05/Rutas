@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../themes/colores.dart';
+
 class EndMarkerPainter extends CustomPainter {
   final int kilometers;
   final String destination;
@@ -8,7 +10,7 @@ class EndMarkerPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final blackPaint = Paint()..color = Colors.blue;
+    final blackPaint = Paint()..color = Colores.yellow;
 
     final whitePaint = Paint()..color = Colors.white;
 

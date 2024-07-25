@@ -26,19 +26,20 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
     });
   }
 
-  Future getCurrentPosition() async {
-    final position = await Geolocator.getCurrentPosition();
-    add(OnNewUserLocationEvent(LatLng(position.latitude, position.longitude)));
-  }
+  // Future getCurrentPosition() async {
+  //   final position = await Geolocator.getCurrentPosition();
+  //   add(OnNewUserLocationEvent(LatLng(position.latitude, position.longitude)));
+  // }
 
-  void startFollowingUser() {
+  void startFollowingUser(LatLng coords) {
     add(OnStartFollowingUser());
 
-    positionStream = Geolocator.getPositionStream().listen((event) {
-      final position = event;
-      add(OnNewUserLocationEvent(
-          LatLng(position.latitude, position.longitude)));
-    });
+    add(OnNewUserLocationEvent(LatLng(coords.latitude, coords.longitude)));
+    // positionStream = Geolocator.getPositionStream().listen((event) {
+    //   final position = event;
+    //   add(OnNewUserLocationEvent(
+    //       LatLng(position.latitude, position.longitude)));
+    // });
   }
 
   void stopFollowingUser() {

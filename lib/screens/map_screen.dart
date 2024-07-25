@@ -17,19 +17,19 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
-  late LocationBloc locationBloc;
+  // late LocationBloc locationBloc;
 
   @override
   void initState() {
     super.initState();
 
-    locationBloc = BlocProvider.of<LocationBloc>(context);
-    locationBloc.startFollowingUser();
+    // locationBloc = BlocProvider.of<LocationBloc>(context);
+    // locationBloc.startFollowingUser();
   }
 
   @override
   void dispose() {
-    locationBloc.stopFollowingUser();
+    // locationBloc.stopFollowingUser();
     super.dispose();
   }
 

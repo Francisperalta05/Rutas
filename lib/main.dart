@@ -2,10 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:maps_app/blocs/blocs.dart';
 
-import 'package:maps_app/screens/screens.dart';
 import 'package:maps_app/services/services.dart';
 
-void main() {
+import 'package:intl/date_symbol_data_local.dart';
+
+import 'screens/add_list_view.dart';
+import 'screens/home_view.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting('es_ES', null);
+
   runApp(MultiBlocProvider(
     providers: [
       BlocProvider(create: (context) => GpsBloc()),
@@ -25,11 +32,18 @@ class MapsApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'MapsApp',
-      // home: LoadingScreen(),
-      home: RouteListScreen(),
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'MapsApp',
+        // home: LoadingScreen(),
+        home: HomeView(),
+        routes: {
+          "home": (BuildContext context) => const HomeView(),
+          "add": (BuildContext context) => const AddListView(),
+        },
+      ),
     );
   }
 }

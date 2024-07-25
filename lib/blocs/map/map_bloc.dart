@@ -10,6 +10,8 @@ import 'package:maps_app/helpers/helpers.dart';
 import 'package:maps_app/models/models.dart';
 import 'package:maps_app/services/services.dart';
 
+import '../../themes/colores.dart';
+
 part 'map_event.dart';
 part 'map_state.dart';
 
@@ -63,7 +65,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       UpdateUserPolylineEvent event, Emitter<MapState> emit) {
     final myRoute = Polyline(
       polylineId: const PolylineId('myRoute'),
-      color: Colors.blue,
+      color: Colores.yellow,
       width: 5,
       startCap: Cap.roundCap,
       endCap: Cap.roundCap,
@@ -79,7 +81,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   Future drawRoutePolyline(RouteDestination destination) async {
     final myRoute = Polyline(
       polylineId: const PolylineId('route'),
-      color: Colors.blue,
+      color: Colores.yellow,
       width: 5,
       points: destination.points,
       startCap: Cap.roundCap,

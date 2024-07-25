@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:maps_app/themes/colores.dart';
 
 class StartMarkerPainter extends CustomPainter {
   final int minutes;
@@ -8,7 +9,7 @@ class StartMarkerPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final blackPaint = Paint()..color = Colors.blue;
+    final blackPaint = Paint()..color = Colores.yellow;
 
     final whitePaint = Paint()..color = Colors.white;
 
