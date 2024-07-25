@@ -7,7 +7,7 @@ import 'package:maps_app/ui/ui.dart';
 
 class BtnCurrentLocation extends StatelessWidget {
   
-  const BtnCurrentLocation({Key? key}) : super(key: key);
+  const BtnCurrentLocation({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -6,7 +6,7 @@ import 'package:maps_app/blocs/blocs.dart';
 import 'package:maps_app/helpers/helpers.dart';
 
 class ManualMarker extends StatelessWidget {
-  const ManualMarker({Key? key}) : super(key: key);
+  const ManualMarker({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +27,7 @@ class ManualMarker extends StatelessWidget {
 
 class _ManualMarkerBody extends StatelessWidget {
 
-  const _ManualMarkerBody({Key? key}) : super(key: key);
+  const _ManualMarkerBody();
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +68,6 @@ class _ManualMarkerBody extends StatelessWidget {
               duration: const Duration( milliseconds: 300 ),
               child: MaterialButton(
                 minWidth: size.width -120,
-                child: const Text('Confimar destino', style: TextStyle( color: Colors.white, fontWeight: FontWeight.w300 )),
                 color: Colors.black,
                 elevation: 0,
                 height: 50,
@@ -94,6 +93,7 @@ class _ManualMarkerBody extends StatelessWidget {
                   Navigator.pop(context);
                   
                 },
+                child: const Text('Confimar destino', style: TextStyle( color: Colors.white, fontWeight: FontWeight.w300 )),
               ),
             )
           ),
@@ -105,9 +105,7 @@ class _ManualMarkerBody extends StatelessWidget {
 }
 
 class _BtnBack extends StatelessWidget {
-  const _BtnBack({
-    Key? key,
-  }) : super(key: key);
+  const _BtnBack();
 
   @override
   Widget build(BuildContext context) {

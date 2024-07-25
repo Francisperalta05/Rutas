@@ -4,7 +4,7 @@ import 'package:maps_app/blocs/blocs.dart';
 
 
 class BtnToggleUserRoute extends StatelessWidget {
-  const BtnToggleUserRoute({Key? key}) : super(key: key);
+  const BtnToggleUserRoute({super.key});
 
   @override
   Widget build(BuildContext context) {

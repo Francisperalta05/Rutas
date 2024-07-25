@@ -4,7 +4,7 @@ import 'package:maps_app/blocs/blocs.dart';
 
 
 class BtnFollowUser extends StatelessWidget {
-  const BtnFollowUser({Key? key}) : super(key: key);
+  const BtnFollowUser({super.key});
 
   @override
   Widget build(BuildContext context) {

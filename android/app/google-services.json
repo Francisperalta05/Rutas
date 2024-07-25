@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "992422966346",
+    "project_id": "rutas-app-ae221",
+    "storage_bucket": "rutas-app-ae221.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:992422966346:android:7769bd04e542146b56a2b3",
+        "android_client_info": {
+          "package_name": "com.mapsapp001.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyByrYmQ3UHrdvBW6F7n5oXDlTrZdZi21O4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
